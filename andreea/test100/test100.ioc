@@ -11,18 +11,11 @@ Mcu.Name=STM32F769NIHx
 Mcu.Package=TFBGA216
 Mcu.Pin0=PJ4
 Mcu.Pin1=PJ3
-<<<<<<< HEAD
 Mcu.Pin2=PA6
 Mcu.Pin3=PJ0
 Mcu.Pin4=PJ1
 Mcu.Pin5=VP_SYS_VS_Systick
 Mcu.PinsNb=6
-=======
-Mcu.Pin2=PJ0
-Mcu.Pin3=PJ1
-Mcu.Pin4=VP_SYS_VS_Systick
-Mcu.PinsNb=5
->>>>>>> f652ff6... Semafor v0.1
 Mcu.ThirdPartyNb=0
 Mcu.UserConstants=
 Mcu.UserName=STM32F769NIHx
@@ -38,11 +31,8 @@ NVIC.PriorityGroup=NVIC_PRIORITYGROUP_4
 NVIC.SVCall_IRQn=true\:0\:0\:false\:false\:true\:false\:false
 NVIC.SysTick_IRQn=true\:0\:0\:false\:false\:true\:false\:true
 NVIC.UsageFault_IRQn=true\:0\:0\:false\:false\:true\:false\:false
-<<<<<<< HEAD
 PA6.Locked=true
 PA6.Signal=GPIO_Input
-=======
->>>>>>> f652ff6... Semafor v0.1
 PCC.Checker=false
 PCC.Line=STM32F7x9
 PCC.MCU=STM32F769NIHx
