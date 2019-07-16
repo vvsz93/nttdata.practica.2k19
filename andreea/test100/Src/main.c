@@ -99,7 +99,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  HAL_Delay(200);
+	  HAL_Delay(100);
 	  if(HAL_GPIO_ReadPin(GPIOJ,GPIO_PIN_1)==GPIO_PIN_SET && HAL_GPIO_ReadPin(GPIOJ,GPIO_PIN_1)!=oldState){
 		  count++;
 		  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
