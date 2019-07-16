@@ -3,4 +3,5 @@
 void vPrintSzili(void)
 {
 	//TODO
+	ERROR;
 }
