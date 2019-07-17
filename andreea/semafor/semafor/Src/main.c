@@ -42,7 +42,6 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN PV */
 
@@ -58,7 +57,14 @@ static void MX_ADC1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#define MIN_ADC 0
+#define MAX_ADC 4095
 
+#define RED_FORWARD 1363
+#define YELLOW_FORWARD 2727
+
+#define RED_BACKWARD 1023
+#define YELLOW_BACKWARD 2375
 /* USER CODE END 0 */
 
 /**
@@ -103,6 +109,25 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
+	  HAL_Delay(35);
+	  	  if(HAL_GPIO_ReadPin(GPIOJ,GPIO_PIN_1)==GPIO_PIN_SET && HAL_GPIO_ReadPin(GPIOJ,GPIO_PIN_1)!=oldState){
+	  		  count++;
+	  		  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
+	  		  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
+	  		  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
+	  	  }
+	  	  switch (count%3){
+	  	  		case 0:
+	  	  			HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_SET);
+	  	  		  	break;
+	  	  		case 1:
+	  	  			HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
+	  	  			break;
+	  	  		case 2:
+	  	  			HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_SET);
+	  	  		  	break;
+	  	  }
+	  	  oldState=HAL_GPIO_ReadPin(GPIOJ,GPIO_PIN_1);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
