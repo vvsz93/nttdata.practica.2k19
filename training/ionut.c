@@ -2,5 +2,9 @@
 
 void vPrintIonut(void)
 {
-    //TODO	
+  if (local)
+     //TODO
+  else{
+    printf("custom message from beyond compare");
+	}
 }
