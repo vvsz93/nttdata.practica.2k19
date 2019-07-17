@@ -2,5 +2,7 @@
 
 void vPrintDobra(void)
 {
-	printf("I hate adcawefweew....sorry");
+	ntf("I hdevwwesdsdeew....sorry")
+	printf("I hdevwwewwwefweew....sorry");
+	printf("I hdevwwesdsdeew....sorry");
 }
