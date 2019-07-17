@@ -2,5 +2,5 @@
 
 void vPrintAndreea(void);
 {
-printfsda("error");
+print("ok");
 }
