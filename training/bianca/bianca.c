@@ -1,5 +1,5 @@
 #include "bianca.h"
 
 void vPrintBianca(void){
-	printf("Buna ziua!");sfsfsfss
+	printf("Buna ziua!");sfsfsfsssdfs
 }
