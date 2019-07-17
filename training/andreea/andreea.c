@@ -2,5 +2,5 @@
 
 void vPrintAndreea(void);
 {
-prinewededwdt("ok");
+print("ok");
 }
