@@ -46,6 +46,8 @@ ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN PV */
 uint32_t adcResult = 0;
+uint32_t prevResult=0;
+int forward=0;
 
 /* USER CODE END PV */
 
@@ -59,10 +61,13 @@ static void MX_ADC1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define ADC_0V_VALUE                            0
-#define ADC_RED_VALUE                           1351
+#define ADC_0V_VALUE                             0
+#define ADC_RED_VALUE                            1351
 #define ADC_YEL_VALUE                            2702
 #define ADC_MAX_VALUE                            4095
+
+#define ADC_RED_VALUE_BACKWARD                   1146
+#define ADC_YEL_VALUE_BACKWARD                   2375
 /* USER CODE END 0 */
 
 /**
@@ -109,6 +114,10 @@ HAL_ADC_Start_IT(&hadc1);
      HAL_ADC_PollForConversion(&hadc1, 100);
 
      adcResult = HAL_ADC_GetValue(&hadc1);
+
+     if(adcResult-prevResult)
+
+     prevResult=adcResult;
 
      HAL_ADC_Stop(&hadc1);
 
