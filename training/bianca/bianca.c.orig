@@ -1,0 +1,11 @@
+#include "bianca.h"
+<<<<<<< HEAD
+
+void vPrintBianca(void){
+	printfaaaaa("lalalaaa");
+=======
+void vPrintBianca(void)
+{
+	printf("Buna ziua!");
+>>>>>>> 2450d6240fafd50fdf211b1b2a3a99f87fe60fce
+}
