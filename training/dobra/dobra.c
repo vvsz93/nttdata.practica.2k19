@@ -2,5 +2,5 @@
 
 void vPrintDobra(void)
 {
-	printf("I talk too much....sorry");
+	printf("I hate Tuesdays....sorry");
 }
