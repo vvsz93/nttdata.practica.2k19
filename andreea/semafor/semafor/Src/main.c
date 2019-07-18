@@ -42,6 +42,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN PV */
 
@@ -99,7 +100,9 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
-  int count=0, oldState=GPIO_PIN_RESET;
+  int count=0, oldState=GPIO_PIN_RESET, currentADC=0, previousADC=0;
+
+  HAL_ADC_Start_IT(&hadc1);
 
   /* USER CODE END 2 */
 
@@ -128,6 +131,51 @@ int main(void)
 	  	  		  	break;
 	  	  }
 	  	  oldState=HAL_GPIO_ReadPin(GPIOJ,GPIO_PIN_1);
+
+	  	  HAL_ADC_Start(&hadc1);
+
+	  	  HAL_ADC_PollForConversion(&hadc1,100);
+	  	  currentADC=HAL_ADC_GetValue(&hadc1);
+
+	  	  HAL_ADC_Stop(&hadc1);
+
+	  	  if(currentADC-previousADC>0){ //forward
+	  		  if(currentADC>MIN_ADC && currentADC<=RED_FORWARD){ //red
+	  			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
+	  			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
+	  			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_SET);
+	  		  }
+	  		  if(currentADC<RED_FORWARD && currentADC<=YELLOW_FORWARD){ //yellow
+	  			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
+	  			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
+	  			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
+	  		  }
+	  		  if(currentADC<YELLOW_FORWARD && currentADC<MAX_ADC){ //green
+	  			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
+	  			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
+	  			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
+	  		  }
+	  	  }
+	  	  else{ //backward
+				if(currentADC>MIN_ADC && currentADC<=RED_BACKWARD){ //red
+					HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
+					HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
+					HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_SET);
+				}
+				if(currentADC<RED_BACKWARD && currentADC<=YELLOW_BACKWARD){ //yellow
+					HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
+					HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
+					HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
+				}
+				if(currentADC<YELLOW_BACKWARD && currentADC<MAX_ADC){ //green
+					HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
+					HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
+					HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
+				}
+	  	  }
+
+	  	  previousADC=currentADC;
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
