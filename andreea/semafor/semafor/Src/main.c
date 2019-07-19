@@ -113,20 +113,19 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-	  /*HAL_Delay(35);
+	  HAL_Delay(100);
 	  if(HAL_GPIO_ReadPin(GPIOJ,GPIO_PIN_1)==GPIO_PIN_SET && HAL_GPIO_ReadPin(GPIOJ,GPIO_PIN_1)!=oldState){
 		  count++;
 		  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
 		  last=0;
-	  }*/
+	  }
 
 	  HAL_ADC_Start(&hadc1);
 
 	  HAL_ADC_PollForConversion(&hadc1,100);
 	  currentADC=HAL_ADC_GetValue(&hadc1);
-	  printf("%d\n",currentADC);
 
 	  HAL_ADC_Stop(&hadc1);
 
@@ -134,59 +133,65 @@ int main(void)
 		  last=1;
 	  }
 
-	  /*if(last==0){
+	  if(last==0){ //button
 		  switch (count%3){
-		  case 0:
+		  case 0: //green
 			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_SET);
 			  break;
-		  case 1:
+		  case 1: //yellow
 			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
 			  break;
-		  case 2:
+		  case 2: //red
 			  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_SET);
 			  break;
 		  }
 		  oldState=HAL_GPIO_ReadPin(GPIOJ,GPIO_PIN_1);
-	  }*/
-	  //else{
-		  if(currentADC-previousADC>100){ //forward
-			  if(currentADC>MIN_ADC && currentADC<=RED_FORWARD){ //red
+	  }
+	  else{ //potentiometer
+		  if(currentADC-previousADC>30){ //forward
+			  if(currentADC>MIN_ADC && currentADC<RED_FORWARD){ //red
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_SET);
+				  count=2;
 			  }
-			  if(currentADC<RED_FORWARD && currentADC<=YELLOW_FORWARD){ //yellow
+			  if(currentADC>RED_FORWARD && currentADC<YELLOW_FORWARD){ //yellow
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
+				  count=1;
 			  }
-			  if(currentADC<YELLOW_FORWARD && currentADC<MAX_ADC){ //green
-				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
-				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
+			  if(currentADC>YELLOW_FORWARD && currentADC<MAX_ADC){ //green
+				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_SET);
+				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
+				  count=0;
 			  }
 		  }
 		  else{ //backward
-			  if(currentADC>MIN_ADC && currentADC<=RED_BACKWARD){ //red
+			  if(currentADC>MIN_ADC && currentADC<RED_BACKWARD){ //red
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_SET);
+				  count=2;
 			  }
-			  if(currentADC<RED_BACKWARD && currentADC<=YELLOW_BACKWARD){ //yellow
+			  if(currentADC>RED_BACKWARD && currentADC<YELLOW_BACKWARD){ //yellow
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
+				  count=1;
 			  }
-			  if(currentADC<YELLOW_BACKWARD && currentADC<MAX_ADC){ //green
-				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
-				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
+			  if(currentADC>YELLOW_BACKWARD && currentADC<MAX_ADC){ //green
+				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_SET);
+				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
+				  count=0;
 			  }
 		  }
 
 		  previousADC=currentADC;
 		  HAL_Delay(100);
-	  //}
+	  }
 
     /* USER CODE BEGIN 3 */
   }
