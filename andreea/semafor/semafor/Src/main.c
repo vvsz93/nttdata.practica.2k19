@@ -129,7 +129,7 @@ int main(void)
 
 	  HAL_ADC_Stop(&hadc1);
 
-	  if(currentADC-previousADC>100 || previousADC-currentADC<100){
+	  if(currentADC>100+previousADC || previousADC>100+currentADC){
 		  last=1;
 	  }
 
@@ -148,45 +148,41 @@ int main(void)
 		  oldState=HAL_GPIO_ReadPin(GPIOJ,GPIO_PIN_1);
 	  }
 	  else{ //potentiometer
-		  if(currentADC-previousADC>30){ //forward
+		  if(currentADC-previousADC>100){ //forward
 			  if(currentADC>MIN_ADC && currentADC<RED_FORWARD){ //red
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_SET);
-				  count=2;
 			  }
 			  if(currentADC>RED_FORWARD && currentADC<YELLOW_FORWARD){ //yellow
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
-				  count=1;
 			  }
 			  if(currentADC>YELLOW_FORWARD && currentADC<MAX_ADC){ //green
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_SET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
-				  count=0;
 			  }
+			  count++;
 		  }
 		  else{ //backward
 			  if(currentADC>MIN_ADC && currentADC<RED_BACKWARD){ //red
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_SET);
-				  count=2;
 			  }
 			  if(currentADC>RED_BACKWARD && currentADC<YELLOW_BACKWARD){ //yellow
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
-				  count=1;
 			  }
 			  if(currentADC>YELLOW_BACKWARD && currentADC<MAX_ADC){ //green
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_SET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
 				  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,GPIO_PIN_RESET);
-				  count=0;
 			  }
+			  count--;
 		  }
 
 		  previousADC=currentADC;
