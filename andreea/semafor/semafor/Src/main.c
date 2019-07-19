@@ -100,7 +100,8 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
-  int count=0, oldState=GPIO_PIN_RESET, currentADC=0, previousADC=0, last=0;
+  int count=0, oldState=GPIO_PIN_RESET, last=0;
+  uint32_t currentADC=0,previousADC=0;
 
   HAL_ADC_Start_IT(&hadc1);
 
@@ -125,6 +126,7 @@ int main(void)
 
 	  HAL_ADC_PollForConversion(&hadc1,100);
 	  currentADC=HAL_ADC_GetValue(&hadc1);
+	  printf("%d\n",currentADC);
 
 	  HAL_ADC_Stop(&hadc1);
 
