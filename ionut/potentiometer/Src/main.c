@@ -121,7 +121,7 @@ HAL_ADC_Start_IT(&hadc1);
       HAL_ADC_Stop(&hadc1);
 
 
-         if(abs((int)adcResult-(int)prevResult)>20)
+         if(abs((int)adcResult-(int)prevResult)>30)
      {
 
 
@@ -147,13 +147,13 @@ HAL_ADC_Start_IT(&hadc1);
      	 }
      }
      else{
-    	 if(adcResult >=ADC_0V_VALUE && adcResult < ADC_RED_VALUE_BACKWARD)
+    	 if(adcResult >=ADC_0V_VALUE && adcResult < ADC_RED_VALUE_BACKWARD-20)
     	     	 {
     	    	 	 HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_4,GPIO_PIN_SET);
     	    	 	 HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_RESET);
     	    	 	 HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
     	     	 }
-    	     	 if(adcResult >= ADC_RED_VALUE_BACKWARD && adcResult < ADC_YEL_VALUE_BACKWARD)
+    	     	 if(adcResult >= ADC_RED_VALUE_BACKWARD && adcResult < ADC_YEL_VALUE_BACKWARD-20)
     	     	 {
     		     	 HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_4,GPIO_PIN_RESET);
     		     	 HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_3,GPIO_PIN_SET);
@@ -168,7 +168,7 @@ HAL_ADC_Start_IT(&hadc1);
      }
     }
          prevResult=adcResult;
-         HAL_Delay(100);
+         HAL_Delay(500);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
