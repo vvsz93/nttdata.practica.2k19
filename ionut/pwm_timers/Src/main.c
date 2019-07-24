@@ -42,24 +42,18 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
-volatile unsigned int *DWT_CYCCNT   = (volatile unsigned int *)0xE0001004; //address of the register
 
-
-volatile unsigned int *DWT_CONTROL  = (volatile unsigned int *)0xE0001000; //address of the register
-
-
-volatile unsigned int *DWT_LAR      = (volatile unsigned int *)0xE0001FB0; //address of the register
-
-
-volatile unsigned int *SCB_DEMCR    = (volatile unsigned int *)0xE000EDFC; //address of the register
 
 volatile unsigned int *x,*y;
 uint8_t dutycycle=50;
+uint32_t adcResult = 0;
+float intermediate=1.3;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -67,13 +61,14 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM1_Init(void);
+static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+#define ADC_MAX_VALUE                            4095
 /* USER CODE END 0 */
 
 /**
@@ -83,16 +78,7 @@ static void MX_TIM1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	*DWT_LAR = 0xC5ACCE55; // unlock (CM7)
 
-
-	  *SCB_DEMCR |= 0x01000000;
-
-
-	  *DWT_CYCCNT = 0; // reset the counter
-
-
-	  *DWT_CONTROL |= 1 ; // enable the counter
   /* USER CODE END 1 */
   
 
@@ -116,10 +102,12 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM3_Init();
   MX_TIM1_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 HAL_TIM_Base_Start_IT(&htim3);
 HAL_TIM_Base_Start_IT(&htim1);
 HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+HAL_ADC_Start_IT(&hadc1);
 
   /* USER CODE END 2 */
 
@@ -128,6 +116,20 @@ HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
   while (1)
   {
     /* USER CODE END WHILE */
+	  HAL_ADC_Start(&hadc1);
+
+	      HAL_ADC_PollForConversion(&hadc1, 100);
+
+
+	      adcResult = HAL_ADC_GetValue(&hadc1);
+
+	      //scaling
+
+	      //1 + 99 * (x - min(x)) / (max(x) - min(x))
+          intermediate=((float)(adcResult-0)/(4095));
+	      dutycycle=1+99*intermediate;
+	      HAL_Delay(100);
+
 
     /* USER CODE BEGIN 3 */
   }
@@ -170,6 +172,56 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC1_Init(void)
+{
+
+  /* USER CODE BEGIN ADC1_Init 0 */
+
+  /* USER CODE END ADC1_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
+  */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.ScanConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+  */
+  sConfig.Channel = ADC_CHANNEL_6;
+  sConfig.Rank = ADC_REGULAR_RANK_1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+
 }
 
 /**
@@ -290,6 +342,7 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOJ_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
