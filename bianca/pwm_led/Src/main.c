@@ -108,30 +108,23 @@ int main(void)
   RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
   /* Set the Prescaler value
   PSC = (SystemCoreClock / 8000000)-1 */
-  TIM3->PSC  = 23999;
+  TIM3->PSC  = 15999;
   TIM3->ARR = 2000;
-  TIM3->CCER |= TIM_CCER_CC1E;
-  /*TIM3->CCR3 = 0;	  // Start PWM duty for channel 3
+  /*
+  TIM3->CCER |= TIM_CCER_CC1E | TIM_CCER_CC3E;
   TIM3->CCR4 = 500; // Start PWM duty for channel 4
 
-  TIM3->CCMR2 = TIM_CCMR2_OC4M_2 | TIM_CCMR2_OC4M_1 |
-                TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC3M_1; // PWM mode on channel 3 & 4
-
-  TIM3->CCER = TIM_CCER_CC4E | TIM_CCER_CC3E;*/
+  TIM3->CCMR2 = TIM_CCMR2_OC4M_2 | TIM_CCMR2_OC4M_1;// PWM mode on channel 4
+*/
   TIM3->CR1  = TIM_CR1_CEN;	// Enable timer
 
-/*
   TIM3->DIER = TIM_DIER_UIE; // Enable update interrupt (timer level)
   NVIC_EnableIRQ(TIM3_IRQn); // Enable interrupt from TIM3 (NVIC level)
-*/
+
   while (1)
   {
     /* USER CODE END WHILE */
-	  if(TIM3->CNT<1000){
-		  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,1);
-	  } else {
-		  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_4,0);
-	  }
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -143,7 +136,10 @@ int main(void)
   */
 void TIM3_IRQHandler(void)
 {
-		  HAL_GPIO_TogglePin(GPIOJ,GPIO_PIN_4);
+	if(TIM3->SR & TIM_SR_UIF) {
+		TIM3->SR &= ~TIM_SR_UIF;
+		HAL_GPIO_TogglePin(GPIOJ,GPIO_PIN_4);
+	}
 }
 void SystemClock_Config(void)
 {
