@@ -20,7 +20,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32f769xx.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -61,11 +60,11 @@ static void MX_TIM3_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
+/*void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim->Instance==TIM3){
 		HAL_GPIO_TogglePin(GPIOH,GPIO_PIN_6);
 	}
-}
+}*/
 
 void TIM3_IRQHandler(void){
 	if(TIM3->SR & TIM_SR_UIF){
@@ -105,14 +104,17 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  //MX_TIM3_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   //HAL_TIM_Base_Start_IT(&htim3);
   RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
   TIM3->PSC  = 15999;
-  TIM3->ARR = 2000;
-  TIM3->CCER |= TIM_CCER_CC1E;
+  TIM3->ARR = 1000;
+  TIM3->CCER = 0;
   TIM3->CR1  = TIM_CR1_CEN;
+
+  TIM3->DIER = TIM_DIER_UIE; // Enable update interrupt (timer level)
+  NVIC_EnableIRQ(TIM3_IRQn); // Enable interrupt from TIM3 (NVIC level)
 
   /* USER CODE END 2 */
 
@@ -122,7 +124,9 @@ int main(void)
   {
 
     /* USER CODE END WHILE */
-	  HAL_GPIO_TogglePin(GPIOH,GPIO_PIN_6);
+	  HAL_GPIO_WritePin(GPIOH,GPIO_PIN_6,GPIO_PIN_SET);
+	  HAL_Delay(1000);
+	  HAL_GPIO_WritePin(GPIOH,GPIO_PIN_6,GPIO_PIN_RESET);
 	  HAL_Delay(1000);
 
     /* USER CODE BEGIN 3 */
@@ -187,9 +191,9 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 16000;
+  htim3.Init.Prescaler = 48000;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 999;
+  htim3.Init.Period = 499;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
