@@ -100,7 +100,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   //HAL_TIM_Base_Start_IT(&htim3);
   RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-  TIM3->PSC  = 25999;
+  TIM3->PSC  = 15999;
   TIM3->ARR = 2000;
   TIM3->CCER |= TIM_CCER_CC1E;
   TIM3->CR1  = TIM_CR1_CEN;
@@ -118,6 +118,8 @@ int main(void)
 	  }
 	  else HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
 
+	  HAL_GPIO_TogglePin(GPIOH,GPIO_PIN_6);
+	  HAL_Delay(1000);
 
     /* USER CODE BEGIN 3 */
   }
