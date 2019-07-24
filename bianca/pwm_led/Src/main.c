@@ -109,16 +109,16 @@ int main(void)
   /* Set the Prescaler value
   PSC = (SystemCoreClock / 8000000)-1 */
   TIM3->PSC  = 15999;
-  TIM3->ARR = 2000;
-  /*
+  TIM3->ARR = 1000;
+
   TIM3->CCER |= TIM_CCER_CC1E | TIM_CCER_CC3E;
   TIM3->CCR4 = 500; // Start PWM duty for channel 4
 
   TIM3->CCMR2 = TIM_CCMR2_OC4M_2 | TIM_CCMR2_OC4M_1;// PWM mode on channel 4
-*/
+
   TIM3->CR1  = TIM_CR1_CEN;	// Enable timer
 
-  TIM3->DIER = TIM_DIER_UIE; // Enable update interrupt (timer level)
+  TIM3->DIER = TIM_DIER_CC4IE; // Enable update interrupt (timer level)
   NVIC_EnableIRQ(TIM3_IRQn); // Enable interrupt from TIM3 (NVIC level)
 
   while (1)
