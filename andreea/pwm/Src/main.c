@@ -60,11 +60,20 @@ static void MX_TIM3_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim->Instance==TIM3){
 		HAL_GPIO_TogglePin(GPIOH,GPIO_PIN_6);
 	}
 }
+
+void TIM3_IRQHandler(void){
+	if(TIM3->SR & TIM_SR_UIF){
+	  TIM3->SR &= ~TIM_SR_UIF;
+	  HAL_GPIO_TogglePin(GPIOJ,GPIO_PIN_0);
+	}
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -113,11 +122,6 @@ int main(void)
   {
 
     /* USER CODE END WHILE */
-	  if(TIM3->CNT<1000){
-		  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_SET);
-	  }
-	  else HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
-
 	  HAL_GPIO_TogglePin(GPIOH,GPIO_PIN_6);
 	  HAL_Delay(1000);
 
