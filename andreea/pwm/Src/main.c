@@ -67,9 +67,28 @@ static void MX_TIM3_Init(void);
 }*/
 
 void TIM3_IRQHandler(void){
-	if(TIM3->SR & TIM_SR_UIF){
+	/*if(TIM3->SR & TIM_SR_UIF){ //2000
 	  TIM3->SR &= ~TIM_SR_UIF;
-	  HAL_GPIO_TogglePin(GPIOJ,GPIO_PIN_0);
+	  HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
+	}
+	else if(TIM3->SR & TIM_SR_CC3OF){ //1000
+		TIM3->SR &= ~TIM_SR_CC3OF;
+		HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_SET);
+	}*/
+	if(TIM3->SR & TIM_SR_UIF) // if UIF flag is set
+	  {
+	  TIM3->SR &= ~TIM_SR_UIF;  // clear UIF flag
+	  TIM3->CCR3 += 5;	         // increase ch3 duty
+	  if(TIM3->CCR3 == 100)	{    // if maximum
+	    TIM3->CCR3 = 0;	        // set to zero
+	    HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_RESET);
+	  }
+	  TIM3->CCR4 -= 5;	         // decrease ch4 duty
+	  if(TIM3->CCR4 == 0)	      // if minimum
+	  {
+	    TIM3->CCR4 = 250;	      // set to maximum
+	    HAL_GPIO_WritePin(GPIOJ,GPIO_PIN_0,GPIO_PIN_SET);
+	  }
 	}
 }
 
@@ -107,11 +126,29 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   //HAL_TIM_Base_Start_IT(&htim3);
-  RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+/* RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
   TIM3->PSC  = 15999;
-  TIM3->ARR = 1000;
-  TIM3->CCER = 0;
+  TIM3->ARR = 2000;
+  TIM3->CCER = 256;
   TIM3->CR1  = TIM_CR1_CEN;
+  TIM3->CCMR2 = TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC3M_1; // PWM mode on channel 3
+
+  TIM3->CCR3 = 1000;
+
+  TIM3->DIER = TIM_DIER_UIE | TIM_DIER_CC3IE; // Enable update interrupt (timer level)
+  NVIC_EnableIRQ(TIM3_IRQn); // Enable interrupt from TIM3 (NVIC level)
+  */
+  TIM3->PSC = 0;	// Set prescaler to 24 000 (PSC + 1)
+  TIM3->ARR = 250;	// Auto reload value 500
+
+  TIM3->CCR3 = 0;	  // Start PWM duty for channel 3
+  TIM3->CCR4 = 500; // Start PWM duty for channel 4
+
+  TIM3->CCMR2 = TIM_CCMR2_OC4M_2 | TIM_CCMR2_OC4M_1 |
+                TIM_CCMR2_OC3M_2 | TIM_CCMR2_OC3M_1; // PWM mode on channel 3 & 4
+
+  TIM3->CCER = TIM_CCER_CC4E | TIM_CCER_CC3E; // Enable compare on channel 3 & 4
+  TIM3->CR1  = TIM_CR1_CEN;	// Enable timer
 
   TIM3->DIER = TIM_DIER_UIE; // Enable update interrupt (timer level)
   NVIC_EnableIRQ(TIM3_IRQn); // Enable interrupt from TIM3 (NVIC level)
