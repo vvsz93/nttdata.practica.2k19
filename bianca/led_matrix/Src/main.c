@@ -44,6 +44,7 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
+
 int matrix[8][8] = {{0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0},
@@ -59,6 +60,8 @@ typedef struct BallPosition{
 	int i;
 	int j;
 }position;
+
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -102,7 +105,7 @@ void write_max (uint8_t address, uint8_t data)
 
 void clearMatrix ()
 {
-  	for(int i=1;i<9;i++)
+  	for(int i=2;i<8;i++)
   	 {
   	   write_max (i,0x00);
   	 }
@@ -129,6 +132,50 @@ void set_one_on_matrix(int line, int a, int b, int c){
 	matrix[line][a]=1;
 	matrix[line][b]=1;
 	matrix[line][c]=1;
+}
+
+void player_bar(uint8_t g_ADCValue, uint8_t prev_value){
+	  if(prev_value - g_ADCValue > 10){
+		  if(g_ADCValue <= 800 ){
+			  clearMatrix();
+			  write_max (1,0x0000000000000007);
+		  } else if(g_ADCValue > 800 && g_ADCValue <= 1500){
+			  clearMatrix();
+			  write_max (1,0x000000000000000e);
+	      } else if(g_ADCValue > 1500 && g_ADCValue <= 2300){
+	    	  clearMatrix();
+	    	  write_max (1,0x000000000000001c);
+	      } else if(g_ADCValue > 2300 && g_ADCValue <= 3000){
+			  clearMatrix();
+			  write_max (1,0x0000000000000038);
+	      } else if(g_ADCValue > 3000  && g_ADCValue <= 3600){
+	    	  clearMatrix();
+	    	  write_max (1,0x0000000000000070);
+	      } else if(g_ADCValue > 3600) {
+	    	  clearMatrix();
+	    	  write_max (1,0x00000000000000e0);
+	      }
+	  } else {
+		  if(g_ADCValue <= 800 ){
+			  clearMatrix();
+			  write_max (1,0x0000000000000007);
+		  } else if(g_ADCValue > 800 && g_ADCValue <= 1500){
+			  clearMatrix();
+			  write_max (1,0x000000000000000e);
+	      } else if(g_ADCValue > 1500 && g_ADCValue <= 2300){
+	    	  clearMatrix();
+	    	  write_max (1,0x000000000000001c);
+	      } else if(g_ADCValue > 2300 && g_ADCValue <= 3000){
+			  clearMatrix();
+			  write_max (1,0x0000000000000038);
+	      } else if(g_ADCValue > 3000  && g_ADCValue <= 3600){
+	    	  clearMatrix();
+	    	  write_max (1,0x0000000000000070);
+	      } else if(g_ADCValue > 3600) {
+	    	  clearMatrix();
+	    	  write_max (1,0x00000000000000e0);
+	      }
+	  }
 }
 int main(void)
 {
@@ -171,44 +218,160 @@ int main(void)
   write_max (1,0x0000000000000038);
   write_max (1,0x0000000000000070);
   write_max (1,0x00000000000000e0);*/
-  uint32_t g_ADCValue;
-  uint32_t prev_value = 0;
-  uint32_t g_ADCValue_2;
-  uint32_t prev_value_2 = 0;
+
   position currpos;
   position lastpos;
   position aux;
-  currpos.i = 2;
-  currpos.j = 5;
-  lastpos.i = 1;
-  lastpos.j = 4;
+  currpos.i = 3;
+  currpos.j = 4;
+  lastpos.i = 2;
+  lastpos.j = 3;
   int neigh_i[4] = {-1,-1,1,1};
   int neigh_j[4] = {-1,1,1,-1};
+  uint32_t g_ADCValue;
+  uint32_t g_ADCValue_2;
+  uint32_t prev_value = 0;
+  uint32_t prev_value_2 = 0;
   while (1)
   {
+
+	          HAL_ADC_Start(&hadc1);
+	    	  HAL_ADC_PollForConversion(&hadc1, 100);
+	    	  g_ADCValue = HAL_ADC_GetValue(&hadc1);
+	    	  if(prev_value - g_ADCValue > 10){
+	    		  if(g_ADCValue <= 800 ){
+	    			  clearMatrix();
+	    			  write_max (1,0x0000000000000007);
+	    		  } else if(g_ADCValue > 800 && g_ADCValue <= 1500){
+	    			  clearMatrix();
+	    			  write_max (1,0x000000000000000e);
+	    	      } else if(g_ADCValue > 1500 && g_ADCValue <= 2300){
+	    	    	  clearMatrix();
+	    	    	  write_max (1,0x000000000000001c);
+	    	      } else if(g_ADCValue > 2300 && g_ADCValue <= 3000){
+	    			  clearMatrix();
+	    			  write_max (1,0x0000000000000038);
+	    	      } else if(g_ADCValue > 3000  && g_ADCValue <= 3600){
+	    	    	  clearMatrix();
+	    	    	  write_max (1,0x0000000000000070);
+	    	      } else if(g_ADCValue > 3600) {
+	    	    	  clearMatrix();
+	    	    	  write_max (1,0x00000000000000e0);
+	    	      }
+	    	  } else {
+	    		  if(g_ADCValue <= 800 ){
+	    			  clearMatrix();
+	    			  write_max (1,0x0000000000000007);
+	    		  } else if(g_ADCValue > 800 && g_ADCValue <= 1500){
+	    			  clearMatrix();
+	    			  write_max (1,0x000000000000000e);
+	    	      } else if(g_ADCValue > 1500 && g_ADCValue <= 2300){
+	    	    	  clearMatrix();
+	    	    	  write_max (1,0x000000000000001c);
+	    	      } else if(g_ADCValue > 2300 && g_ADCValue <= 3000){
+	    			  clearMatrix();
+	    			  write_max (1,0x0000000000000038);
+	    	      } else if(g_ADCValue > 3000  && g_ADCValue <= 3600){
+	    	    	  clearMatrix();
+	    	    	  write_max (1,0x0000000000000070);
+	    	      } else if(g_ADCValue > 3600) {
+	    	    	  clearMatrix();
+	    	    	  write_max (1,0x00000000000000e0);
+	    	      }
+	    	  }
+	    	  prev_value = g_ADCValue;
+	    	  HAL_Delay(100);
+	          HAL_ADC_Stop(&hadc1);
+
+	    	  HAL_ADC_Start(&hadc2);
+	    	  HAL_ADC_PollForConversion(&hadc2, 100);
+	    	  g_ADCValue_2 = HAL_ADC_GetValue(&hadc2);
+	    	  if(prev_value_2 - g_ADCValue_2 > 10){
+	    		  if(g_ADCValue_2 <= 800 ){
+	    			  clearMatrix();
+	    			  write_max (8,0x0000000000000007);
+	    		  } else if(g_ADCValue_2 > 800 && g_ADCValue_2 <= 1500){
+	    			  clearMatrix();
+	    			  write_max (8,0x000000000000000e);
+	    	      } else if(g_ADCValue_2 > 1500 && g_ADCValue_2 <= 2300){
+	    	    	  clearMatrix();
+	    	    	  write_max (8,0x000000000000001c);
+	    	      } else if(g_ADCValue_2 > 2300 && g_ADCValue_2 <= 3000){
+	    			  clearMatrix();
+	    			  write_max (8,0x0000000000000038);
+	    	      } else if(g_ADCValue_2 > 3000  && g_ADCValue_2 <= 3600){
+	    	    	  clearMatrix();
+	    	    	  write_max (8,0x0000000000000070);
+	    	      } else if(g_ADCValue_2 > 3600) {
+	    	    	  clearMatrix();
+	    	    	  write_max (8,0x00000000000000e0);
+	    	      }
+	    	  } else {
+	    		  if(g_ADCValue_2 <= 800 ){
+	    			  clearMatrix();
+	    			  write_max (8,0x0000000000000007);
+	    		  } else if(g_ADCValue_2 > 800 && g_ADCValue_2 <= 1500){
+	    			  clearMatrix();
+	    			  write_max (8,0x000000000000000e);
+	    	      } else if(g_ADCValue_2 > 1500 && g_ADCValue_2 <= 2300){
+	    	    	  clearMatrix();
+	    	    	  write_max (8,0x000000000000001c);
+	    	      } else if(g_ADCValue_2 > 2300 && g_ADCValue_2 <= 3000){
+	    			  clearMatrix();
+	    			  write_max (8,0x0000000000000038);
+	    	      } else if(g_ADCValue_2 > 3000  && g_ADCValue_2 <= 3600){
+	    	    	  clearMatrix();
+	    	    	  write_max (8,0x0000000000000070);
+	    	      } else if(g_ADCValue_2 > 3600) {
+	    	    	  clearMatrix();
+	    	    	  write_max (8,0x00000000000000e0);
+	    	      }
+	    	  }
+	    	  prev_value_2 = g_ADCValue_2;
+	    	  HAL_Delay(100);
+	          HAL_ADC_Stop(&hadc2);
+	          /*
+	           */
 	  for(int x=1; x<9;x++){
 		  for(int y=1;y<9;y++){
 			  if(x==currpos.i && y==currpos.j){
-				  clearMatrix();
-				  write_max(x,point[y-1]);
-				  HAL_Delay(200);
 				  for(int k=0;k<4;k++){
-					  if((y==1 || y==8) && currpos.i+neigh_i[k] == lastpos.i && currpos.j+neigh_j[k]==lastpos.j){
-						  aux = lastpos;
+					  if((y==1 || y==8) && currpos.i - lastpos.i == 1 && currpos.i+neigh_i[k] == lastpos.i && currpos.j+neigh_j[k]==lastpos.j){
+						  aux = currpos;
 						  currpos.i = lastpos.i+2;
 						  currpos.j = lastpos.j;
 						  lastpos = aux;
 						  clearMatrix();
 						  write_max(currpos.i,point[currpos.j-1]);
 						  HAL_Delay(200);
-					  } else if((x==1 || x==8) && currpos.i+neigh_i[k] == lastpos.i && currpos.j+neigh_j[k]==lastpos.j){
-						  aux = lastpos;
+						  break;
+					  } else if((x==1 || x==8) && currpos.j - lastpos.j == 1 && currpos.i+neigh_i[k] == lastpos.i && currpos.j+neigh_j[k]==lastpos.j){
+						  aux = currpos;
 						  currpos.i = lastpos.i;
 						  currpos.j = lastpos.j+2;
 						  lastpos = aux;
 						  clearMatrix();
 						  write_max(currpos.i,point[currpos.j-1]);
 						  HAL_Delay(200);
+						  break;
+					  } else if((y==1 || y==8) && currpos.i+neigh_i[k] == lastpos.i && currpos.j+neigh_j[k]==lastpos.j){
+						  aux = currpos;
+						  currpos.i = lastpos.i-2;
+						  currpos.j = lastpos.j;
+						  lastpos = aux;
+						  clearMatrix();
+						  write_max(currpos.i,point[currpos.j-1]);
+						  HAL_Delay(200);
+						  break;
+					  } else if((x==1 || x==8) && currpos.i+neigh_i[k] == lastpos.i && currpos.j+neigh_j[k]==lastpos.j){
+						  aux = currpos;
+						  currpos.i = lastpos.i;
+						  currpos.j = lastpos.j-2;
+						  lastpos = aux;
+						  clearMatrix();
+						  write_max(currpos.i,point[currpos.j-1]);
+						  HAL_Delay(200);
+						  break;
 					  } else if(currpos.i+neigh_i[k] == lastpos.i && currpos.j+neigh_j[k]==lastpos.j){
 						  lastpos = currpos;
 						  currpos.i -= neigh_i[k];
@@ -216,207 +379,15 @@ int main(void)
 						  clearMatrix();
 						  write_max(currpos.i,point[currpos.j-1]);
 						  HAL_Delay(200);
+						  break;
 					  }
 				  }
 			  }
+
 	  }
   }
-	  /*
-	  if((currpos.i < 8 ||  currpos.i > 1) && (currpos.j > 8 || currpos.j <1)){
-		  if(currpos.i - lastpos.i == 1 && currpos.j - lastpos.j == 1){
-			  clearMatrix();
-			  write_max(currpos.i+1,point[currpos.j+1]);
-		  } else if(currpos.i - lastpos.i == 1 && currpos.j - lastpos.j == -1){
-			  clearMatrix();
-			  write_max(currpos.i+1,point[currpos.j-1]);
-		  } else if(currpos.i - lastpos.i == -1 && currpos.j - lastpos.j == -1){
-			  clearMatrix();
-			  write_max(currpos.i-1,point[currpos.j-1]);
-		  } else if(currpos.i - lastpos.i == -1 && currpos.j - lastpos.j == 1){
-			  clearMatrix();
-			  write_max(currpos.i-1,point[currpos.j+1]);
-		  }
-	  }
-	  if(currpos.j==1){
-		  if(currpos.i-lastpos.i==1){
-			  clearMatrix();
-			  write_max(currpos.i+1,point[currpos.j-2]);
-			  lastpos=currpos;
-			  currpos.i = currpos.i+1;
-			  currpos.j = currpos.j-1;
-		  } else {
-			  clearMatrix();
-			  write_max(currpos.i-1,point[currpos.j-2]);
-			  lastpos=currpos;
-			  currpos.i = currpos.i-1;
-			  currpos.j = currpos.j-1;
-		  }
-	  } */
-    /* USER CODE END WHILE */
-/*
-	  HAL_ADC_Start(&hadc1);
-	  HAL_ADC_Start(&hadc2);
-	  HAL_ADC_PollForConversion(&hadc1, 100);
-	  g_ADCValue = HAL_ADC_GetValue(&hadc1);
-	  if(prev_value - g_ADCValue > 10){
-		  if(g_ADCValue <= 800 ){
-			  clearMatrix();
-			  write_max (1,0x0000000000000007);
-		  } else if(g_ADCValue > 800 && g_ADCValue <= 1500){
-			  clearMatrix();
-			  write_max (1,0x000000000000000e);
-	      } else if(g_ADCValue > 1500 && g_ADCValue <= 2300){
-	    	  clearMatrix();
-	    	  write_max (1,0x000000000000001c);
-	      } else if(g_ADCValue > 2300 && g_ADCValue <= 3000){
-			  clearMatrix();
-			  write_max (1,0x0000000000000038);
-	      } else if(g_ADCValue > 3000  && g_ADCValue <= 3600){
-	    	  clearMatrix();
-	    	  write_max (1,0x0000000000000070);
-	      } else if(g_ADCValue > 3600) {
-	    	  clearMatrix();
-	    	  write_max (1,0x00000000000000e0);
-	      }
-	  } else {
-		  if(g_ADCValue <= 800 ){
-			  clearMatrix();
-			  write_max (1,0x0000000000000007);
-		  } else if(g_ADCValue > 800 && g_ADCValue <= 1500){
-			  clearMatrix();
-			  write_max (1,0x000000000000000e);
-	      } else if(g_ADCValue > 1500 && g_ADCValue <= 2300){
-	    	  clearMatrix();
-	    	  write_max (1,0x000000000000001c);
-	      } else if(g_ADCValue > 2300 && g_ADCValue <= 3000){
-			  clearMatrix();
-			  write_max (1,0x0000000000000038);
-	      } else if(g_ADCValue > 3000  && g_ADCValue <= 3600){
-	    	  clearMatrix();
-	    	  write_max (1,0x0000000000000070);
-	      } else if(g_ADCValue > 3600) {
-	    	  clearMatrix();
-	    	  write_max (1,0x00000000000000e0);
-	      }
-	  }
-	  prev_value = g_ADCValue;
-	  HAL_Delay(100);
-      HAL_ADC_Stop(&hadc1);
 
-	  HAL_ADC_PollForConversion(&hadc2, 100);
-	  g_ADCValue_2 = HAL_ADC_GetValue(&hadc2);
-	  if(prev_value_2 - g_ADCValue_2 > 10){
-		  if(g_ADCValue_2 <= 800 ){
-			  clearMatrix();
-			  write_max (8,0x0000000000000007);
-		  } else if(g_ADCValue_2 > 800 && g_ADCValue_2 <= 1500){
-			  clearMatrix();
-			  write_max (8,0x000000000000000e);
-	      } else if(g_ADCValue_2 > 1500 && g_ADCValue_2 <= 2300){
-	    	  clearMatrix();
-	    	  write_max (8,0x000000000000001c);
-	      } else if(g_ADCValue_2 > 2300 && g_ADCValue_2 <= 3000){
-			  clearMatrix();
-			  write_max (8,0x0000000000000038);
-	      } else if(g_ADCValue_2 > 3000  && g_ADCValue_2 <= 3600){
-	    	  clearMatrix();
-	    	  write_max (8,0x0000000000000070);
-	      } else if(g_ADCValue_2 > 3600) {
-	    	  clearMatrix();
-	    	  write_max (8,0x00000000000000e0);
-	      }
-	  } else {
-		  if(g_ADCValue_2 <= 800 ){
-			  clearMatrix();
-			  write_max (8,0x0000000000000007);
-		  } else if(g_ADCValue_2 > 800 && g_ADCValue_2 <= 1500){
-			  clearMatrix();
-			  write_max (8,0x000000000000000e);
-	      } else if(g_ADCValue_2 > 1500 && g_ADCValue_2 <= 2300){
-	    	  clearMatrix();
-	    	  write_max (8,0x000000000000001c);
-	      } else if(g_ADCValue_2 > 2300 && g_ADCValue_2 <= 3000){
-			  clearMatrix();
-			  write_max (8,0x0000000000000038);
-	      } else if(g_ADCValue_2 > 3000  && g_ADCValue_2 <= 3600){
-	    	  clearMatrix();
-	    	  write_max (8,0x0000000000000070);
-	      } else if(g_ADCValue_2 > 3600) {
-	    	  clearMatrix();
-	    	  write_max (8,0x00000000000000e0);
-	      }
-	  }
-	  prev_value_2 = g_ADCValue_2;
-	  HAL_Delay(100);
-      HAL_ADC_Stop(&hadc2);
-      */
-	  /*if(currPos_i==1){
-		  if(currPos_j - lastPos_j == 1){
-			  clearMatrix();
-			  write_max(currPos_i+1,point[currPos_j+1]);
-			  lastPos_i = currPos_i;
-			  lastPos_j = currPos_j;
-			  currPos_i = currPos_i+1;
-			  currPos_j = currPos_j+1;
-		  } else {
-			  clearMatrix();
-			  write_max(currPos_i+1,point[currPos_j-1]);
-			  lastPos_i = currPos_i;
-			  lastPos_j = currPos_j;
-			  currPos_i = currPos_i+1;
-			  currPos_j = currPos_j-1;
-		  }
-	  }
-	  if(currPos_i==8){
-		  if(currPos_j - lastPos_j == 1){
-			  clearMatrix();
-			  write_max(currPos_i-1,point[currPos_j-1]);
-			  lastPos_i = currPos_i;
-			  lastPos_j = currPos_j;
-			  currPos_i = currPos_i-1;
-			  currPos_j = currPos_j-1;
-		  } else {
-			  write_max(currPos_i-1,point[currPos_j+1]);
-			  lastPos_i = currPos_i;
-			  lastPos_j = currPos_j;
-			  currPos_i = currPos_i-1;
-			  currPos_j = currPos_j+1;
-		  }
-	  }
-	  if(currPos_j==1){
-		  if(currPos_i - lastPos_i == 1){
-			  clearMatrix();
-			  write_max(currPos_i+1,point[currPos_j-1]);
-			  lastPos_i = currPos_i;
-			  lastPos_j = currPos_j;
-			  currPos_i = currPos_i+1;
-			  currPos_j = currPos_j-1;
-		  } else {
-			  clearMatrix();
-			  write_max(currPos_i-1,point[currPos_j-1]);
-			  lastPos_i = currPos_i;
-			  lastPos_j = currPos_j;
-			  currPos_i = currPos_i-1;
-			  currPos_j = currPos_j-1;
-		  }
-	  }
-	  if(currPos_j==8){
-		  if(currPos_j - lastPos_j == 1){
-			  clearMatrix();
-			  write_max(currPos_i+1,point[currPos_j+1]);
-			  lastPos_i = currPos_i;
-			  lastPos_j = currPos_j;
-			  currPos_i = currPos_i+1;
-			  currPos_j = currPos_j+1;
-		  } else {
-			  clearMatrix();
-			  write_max(currPos_i-1,point[currPos_j+1]);
-			  lastPos_i = currPos_i;
-			  lastPos_j = currPos_j;
-			  currPos_i = currPos_i-1;
-			  currPos_j = currPos_j+1;
-		  }
-	  }*/
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
