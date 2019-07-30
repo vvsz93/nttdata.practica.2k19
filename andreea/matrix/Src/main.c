@@ -65,6 +65,8 @@ uint8_t disp1ay[38][8]={
 {0x0,0x41,0x22,0x14,0x8,0x14,0x22,0x41},//X
 {0x41,0x22,0x14,0x8,0x8,0x8,0x8,0x8},//Y
 {0x0,0x7F,0x2,0x4,0x8,0x10,0x20,0x7F},//Z
+{0x1C,0x1C,0x7F,0x5D,0x5D,0x14,0x14,0x14},//standing man
+{0x38,0x38,0x7E,0x7A,0xBA,0x44,0x42,0x41},//walking man
 };
 /* USER CODE END PTD */
 
@@ -163,39 +165,14 @@ int main(void)
     /* USER CODE END WHILE */
 	  for(int i=1;i<9;i++)
 	  {
-		  write_max (i,disp1ay[16][i-1]);
+		  write_max (i,disp1ay[36][i-1]);
 	  }
-	  HAL_Delay (500);
+	  HAL_Delay (300);
 	  for(int i=1;i<9;i++)
 	  {
-		  write_max (i,disp1ay[24][i-1]);
+		  write_max (i,disp1ay[37][i-1]);
 	  }
-	  HAL_Delay (500);
-	  for(int i=1;i<9;i++)
-	  {
-		  write_max (i,disp1ay[16][i-1]);
-	  }
-	  HAL_Delay (500);
-	  for(int i=1;i<9;i++)
-	  {
-		  write_max (i,disp1ay[24][i-1]);
-	  }
-	  HAL_Delay (500);
-	  for(int i=1;i<9;i++)
-	  {
-		  write_max (i,disp1ay[10][i-1]);
-	  }
-	  HAL_Delay (500);
-	  for(int i=1;i<9;i++)
-	  {
-		  write_max (i,disp1ay[28][i-1]);
-	  }
-	  HAL_Delay (500);
-	  for(int i=1;i<9;i++)
-	  {
-		  write_max (i,disp1ay[10][i-1]);
-	  }
-	  HAL_Delay (500);
+	  HAL_Delay (300);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
